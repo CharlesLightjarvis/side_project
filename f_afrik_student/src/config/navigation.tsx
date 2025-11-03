@@ -11,6 +11,8 @@ import {
   Award,
   FolderOpen,
   type LucideIcon,
+  Layers,
+  Boxes,
 } from 'lucide-react'
 import type { UserRole } from '@/routes/__root'
 
@@ -53,23 +55,18 @@ export const navigationMain: NavigationItem[] = [
     url: '/admin/formations',
     icon: BookOpen,
     allowedRoles: ['admin'],
-    items: [
-      {
-        title: 'Toutes les formations',
-        url: '/admin/formations',
-        allowedRoles: ['admin'],
-      },
-      {
-        title: 'Créer une formation',
-        url: '/admin/formations/create',
-        allowedRoles: ['admin'],
-      },
-      {
-        title: 'Catégories',
-        url: '/admin/formations/categories',
-        allowedRoles: ['admin'],
-      },
-    ],
+  },
+  {
+    title: 'Gestion des Modules',
+    url: '/admin/modules',
+    icon: Layers,
+    allowedRoles: ['admin'],
+  },
+  {
+    title: 'Gestion des Leçons',
+    url: '/admin/lessons',
+    icon: Boxes,
+    allowedRoles: ['admin'],
   },
   {
     title: 'Gestion des paiements',

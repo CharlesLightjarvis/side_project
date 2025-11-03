@@ -15,7 +15,7 @@ export const createUserSchema = z.object({
     .email('Veuillez entrer une adresse email valide')
     .max(255, "L'email ne doit pas dépasser 255 caractères"),
   role: z.enum(['admin', 'instructor', 'student'], {
-    errorMap: () => ({ message: 'Veuillez sélectionner un rôle valide' }),
+    message: 'Veuillez sélectionner un rôle valide',
   }),
 })
 
@@ -38,7 +38,7 @@ export const updateUserSchema = z.object({
     .optional(),
   role: z
     .enum(['admin', 'instructor', 'student'], {
-      errorMap: () => ({ message: 'Veuillez sélectionner un rôle valide' }),
+      message: 'Veuillez sélectionner un rôle valide',
     })
     .optional(),
 })

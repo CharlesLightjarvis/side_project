@@ -20,4 +20,31 @@ export const PERMISSIONS = {
     DELETE: 'delete.users',
     MANAGE: 'manage.users',
   },
+
+  // Formation permissions
+  FORMATION: {
+    CREATE: 'create.formations',
+    READ: 'read.formations',
+    UPDATE: 'update.formations',
+    DELETE: 'delete.formations',
+    MANAGE: 'manage.formations',
+  },
+
+  // Module permissions
+  MODULE: {
+    CREATE: 'create.modules',
+    READ: 'read.modules',
+    UPDATE: 'update.modules',
+    DELETE: 'delete.modules',
+    MANAGE: 'manage.modules',
+  },
+
+  // Lesson permissions
+  LESSON: {
+    CREATE: 'create.lessons',
+    READ: 'read.lessons',
+    UPDATE: 'update.lessons',
+    DELETE: 'delete.lessons',
+    MANAGE: 'manage.lessons',
+  },
 } as const

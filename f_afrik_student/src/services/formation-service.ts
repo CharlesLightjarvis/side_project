@@ -1,0 +1,106 @@
+import api from '@/lib/api'
+import type {
+  Formation,
+  CreateFormationData,
+  UpdateFormationData,
+  ApiResponse,
+} from '@/types/formation'
+
+class FormationService {
+  /**
+   * GET - Retrieve all formations
+   */
+  async getAllFormations(): Promise<Formation[]> {
+    const response = await api.get<ApiResponse<Formation[]>>('/api/formations')
+    return response.data.data
+  }
+
+  /**
+   * GET - Retrieve single formation by ID
+   */
+  async getFormationById(id: string): Promise<Formation> {
+    const response = await api.get<ApiResponse<Formation>>(`/api/formations/${id}`)
+    return response.data.data
+  }
+
+  /**
+   * POST - Create new formation
+   */
+  async createFormation(
+    data: CreateFormationData,
+  ): Promise<{ formation: Formation; message: string }> {
+    try {
+      const response = await api.post<ApiResponse<Formation>>('/api/formations', data)
+
+      return {
+        formation: response.data.data,
+        message: response.data.message,
+      }
+    } catch (error: any) {
+      // Extract and rethrow errors with validation details
+      if (error.response?.data) {
+        const err: any = new Error(
+          error.response.data.message || 'Erreur lors de la création',
+        )
+        err.errors = error.response.data.errors
+        throw err
+      }
+      throw error
+    }
+  }
+
+  /**
+   * PUT - Update formation
+   */
+  async updateFormation(
+    id: string,
+    data: UpdateFormationData,
+  ): Promise<{ formation: Formation; message: string }> {
+    try {
+      const response = await api.put<ApiResponse<Formation>>(
+        `/api/formations/${id}`,
+        data,
+      )
+
+      return {
+        formation: response.data.data,
+        message: response.data.message,
+      }
+    } catch (error: any) {
+      // Extract and rethrow errors with validation details
+      if (error.response?.data) {
+        const err: any = new Error(
+          error.response.data.message || 'Erreur lors de la mise à jour',
+        )
+        err.errors = error.response.data.errors
+        throw err
+      }
+      throw error
+    }
+  }
+
+  /**
+   * DELETE - Delete formation
+   */
+  async deleteFormation(id: string): Promise<{ message: string }> {
+    try {
+      const response = await api.delete<ApiResponse<null>>(`/api/formations/${id}`)
+
+      return {
+        message: response.data.message,
+      }
+    } catch (error: any) {
+      // Extract and rethrow errors
+      if (error.response?.data) {
+        const err: any = new Error(
+          error.response.data.message || 'Erreur lors de la suppression',
+        )
+        err.errors = error.response.data.errors
+        throw err
+      }
+      throw error
+    }
+  }
+}
+
+export const formationService = new FormationService()

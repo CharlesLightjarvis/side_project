@@ -51,14 +51,29 @@ class RolesAndPermissionsSeeder extends Seeder
         $student = Role::where('name', UserRoleEnum::STUDENT->value)->first();
         $instructor = Role::where('name', UserRoleEnum::INSTRUCTOR->value)->first();
 
-        if ($admin) {
-            $admin->syncPermissions([
-                PermissionEnum::CREATE_USERS->value,
-                PermissionEnum::READ_USERS->value,
-                PermissionEnum::UPDATE_USERS->value,
-                PermissionEnum::DELETE_USERS->value,
-            ]);
-        }
+      if ($admin) {
+    $admin->syncPermissions([
+        PermissionEnum::CREATE_USERS->value,
+        PermissionEnum::READ_USERS->value,
+        PermissionEnum::UPDATE_USERS->value,
+        PermissionEnum::DELETE_USERS->value,
+
+        PermissionEnum::CREATE_FORMATIONS->value,
+        PermissionEnum::READ_FORMATIONS->value,
+        PermissionEnum::UPDATE_FORMATIONS->value,
+        PermissionEnum::DELETE_FORMATIONS->value,
+
+        PermissionEnum::CREATE_MODULES->value,
+        PermissionEnum::READ_MODULES->value,
+        PermissionEnum::UPDATE_MODULES->value,
+        PermissionEnum::DELETE_MODULES->value,
+
+        PermissionEnum::CREATE_LESSONS->value,
+        PermissionEnum::READ_LESSONS->value,
+        PermissionEnum::UPDATE_LESSONS->value,
+        PermissionEnum::DELETE_LESSONS->value,
+    ]);
+}
 
         if ($instructor) {
             $instructor->syncPermissions([

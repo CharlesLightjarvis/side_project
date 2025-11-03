@@ -20,6 +20,9 @@ import { Route as ProtectedAdminRouteRouteImport } from './routes/_protected/adm
 import { Route as ProtectedAdminUsersRouteRouteImport } from './routes/_protected/admin/users/route'
 import { Route as ProtectedAdminPostsRouteRouteImport } from './routes/_protected/admin/posts/route'
 import { Route as ProtectedAdminPaymentsRouteRouteImport } from './routes/_protected/admin/payments/route'
+import { Route as ProtectedAdminModulesRouteRouteImport } from './routes/_protected/admin/modules/route'
+import { Route as ProtectedAdminLessonsRouteRouteImport } from './routes/_protected/admin/lessons/route'
+import { Route as ProtectedAdminFormationsRouteRouteImport } from './routes/_protected/admin/formations/route'
 import { Route as ProtectedStudentDashboardIndexRouteImport } from './routes/_protected/student/dashboard/index'
 import { Route as ProtectedInstructorDashboardIndexRouteImport } from './routes/_protected/instructor/dashboard/index'
 import { Route as ProtectedAdminDashboardIndexRouteImport } from './routes/_protected/admin/dashboard/index'
@@ -82,6 +85,24 @@ const ProtectedAdminPaymentsRouteRoute =
     path: '/payments',
     getParentRoute: () => ProtectedAdminRouteRoute,
   } as any)
+const ProtectedAdminModulesRouteRoute =
+  ProtectedAdminModulesRouteRouteImport.update({
+    id: '/modules',
+    path: '/modules',
+    getParentRoute: () => ProtectedAdminRouteRoute,
+  } as any)
+const ProtectedAdminLessonsRouteRoute =
+  ProtectedAdminLessonsRouteRouteImport.update({
+    id: '/lessons',
+    path: '/lessons',
+    getParentRoute: () => ProtectedAdminRouteRoute,
+  } as any)
+const ProtectedAdminFormationsRouteRoute =
+  ProtectedAdminFormationsRouteRouteImport.update({
+    id: '/formations',
+    path: '/formations',
+    getParentRoute: () => ProtectedAdminRouteRoute,
+  } as any)
 const ProtectedStudentDashboardIndexRoute =
   ProtectedStudentDashboardIndexRouteImport.update({
     id: '/dashboard/',
@@ -109,6 +130,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/admin/formations': typeof ProtectedAdminFormationsRouteRoute
+  '/admin/lessons': typeof ProtectedAdminLessonsRouteRoute
+  '/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
@@ -124,6 +148,9 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/admin/formations': typeof ProtectedAdminFormationsRouteRoute
+  '/admin/lessons': typeof ProtectedAdminLessonsRouteRoute
+  '/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
@@ -141,6 +168,9 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/_protected/admin/formations': typeof ProtectedAdminFormationsRouteRoute
+  '/_protected/admin/lessons': typeof ProtectedAdminLessonsRouteRoute
+  '/_protected/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/_protected/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/_protected/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/_protected/admin/users': typeof ProtectedAdminUsersRouteRoute
@@ -158,6 +188,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/demo/tanstack-query'
+    | '/admin/formations'
+    | '/admin/lessons'
+    | '/admin/modules'
     | '/admin/payments'
     | '/admin/posts'
     | '/admin/users'
@@ -173,6 +206,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/demo/tanstack-query'
+    | '/admin/formations'
+    | '/admin/lessons'
+    | '/admin/modules'
     | '/admin/payments'
     | '/admin/posts'
     | '/admin/users'
@@ -189,6 +225,9 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/demo/tanstack-query'
+    | '/_protected/admin/formations'
+    | '/_protected/admin/lessons'
+    | '/_protected/admin/modules'
     | '/_protected/admin/payments'
     | '/_protected/admin/posts'
     | '/_protected/admin/users'
@@ -284,6 +323,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAdminPaymentsRouteRouteImport
       parentRoute: typeof ProtectedAdminRouteRoute
     }
+    '/_protected/admin/modules': {
+      id: '/_protected/admin/modules'
+      path: '/modules'
+      fullPath: '/admin/modules'
+      preLoaderRoute: typeof ProtectedAdminModulesRouteRouteImport
+      parentRoute: typeof ProtectedAdminRouteRoute
+    }
+    '/_protected/admin/lessons': {
+      id: '/_protected/admin/lessons'
+      path: '/lessons'
+      fullPath: '/admin/lessons'
+      preLoaderRoute: typeof ProtectedAdminLessonsRouteRouteImport
+      parentRoute: typeof ProtectedAdminRouteRoute
+    }
+    '/_protected/admin/formations': {
+      id: '/_protected/admin/formations'
+      path: '/formations'
+      fullPath: '/admin/formations'
+      preLoaderRoute: typeof ProtectedAdminFormationsRouteRouteImport
+      parentRoute: typeof ProtectedAdminRouteRoute
+    }
     '/_protected/student/dashboard/': {
       id: '/_protected/student/dashboard/'
       path: '/dashboard'
@@ -309,6 +369,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProtectedAdminRouteRouteChildren {
+  ProtectedAdminFormationsRouteRoute: typeof ProtectedAdminFormationsRouteRoute
+  ProtectedAdminLessonsRouteRoute: typeof ProtectedAdminLessonsRouteRoute
+  ProtectedAdminModulesRouteRoute: typeof ProtectedAdminModulesRouteRoute
   ProtectedAdminPaymentsRouteRoute: typeof ProtectedAdminPaymentsRouteRoute
   ProtectedAdminPostsRouteRoute: typeof ProtectedAdminPostsRouteRoute
   ProtectedAdminUsersRouteRoute: typeof ProtectedAdminUsersRouteRoute
@@ -316,6 +379,9 @@ interface ProtectedAdminRouteRouteChildren {
 }
 
 const ProtectedAdminRouteRouteChildren: ProtectedAdminRouteRouteChildren = {
+  ProtectedAdminFormationsRouteRoute: ProtectedAdminFormationsRouteRoute,
+  ProtectedAdminLessonsRouteRoute: ProtectedAdminLessonsRouteRoute,
+  ProtectedAdminModulesRouteRoute: ProtectedAdminModulesRouteRoute,
   ProtectedAdminPaymentsRouteRoute: ProtectedAdminPaymentsRouteRoute,
   ProtectedAdminPostsRouteRoute: ProtectedAdminPostsRouteRoute,
   ProtectedAdminUsersRouteRoute: ProtectedAdminUsersRouteRoute,
