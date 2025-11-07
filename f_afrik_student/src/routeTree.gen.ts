@@ -18,6 +18,7 @@ import { Route as ProtectedStudentRouteRouteImport } from './routes/_protected/s
 import { Route as ProtectedInstructorRouteRouteImport } from './routes/_protected/instructor/route'
 import { Route as ProtectedAdminRouteRouteImport } from './routes/_protected/admin/route'
 import { Route as ProtectedAdminUsersRouteRouteImport } from './routes/_protected/admin/users/route'
+import { Route as ProtectedAdminSessionsRouteRouteImport } from './routes/_protected/admin/sessions/route'
 import { Route as ProtectedAdminPostsRouteRouteImport } from './routes/_protected/admin/posts/route'
 import { Route as ProtectedAdminPaymentsRouteRouteImport } from './routes/_protected/admin/payments/route'
 import { Route as ProtectedAdminModulesRouteRouteImport } from './routes/_protected/admin/modules/route'
@@ -71,6 +72,12 @@ const ProtectedAdminUsersRouteRoute =
   ProtectedAdminUsersRouteRouteImport.update({
     id: '/users',
     path: '/users',
+    getParentRoute: () => ProtectedAdminRouteRoute,
+  } as any)
+const ProtectedAdminSessionsRouteRoute =
+  ProtectedAdminSessionsRouteRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
     getParentRoute: () => ProtectedAdminRouteRoute,
   } as any)
 const ProtectedAdminPostsRouteRoute =
@@ -135,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
+  '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
   '/instructor/dashboard': typeof ProtectedInstructorDashboardIndexRoute
@@ -153,6 +161,7 @@ export interface FileRoutesByTo {
   '/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
+  '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
   '/instructor/dashboard': typeof ProtectedInstructorDashboardIndexRoute
@@ -173,6 +182,7 @@ export interface FileRoutesById {
   '/_protected/admin/modules': typeof ProtectedAdminModulesRouteRoute
   '/_protected/admin/payments': typeof ProtectedAdminPaymentsRouteRoute
   '/_protected/admin/posts': typeof ProtectedAdminPostsRouteRoute
+  '/_protected/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/_protected/admin/users': typeof ProtectedAdminUsersRouteRoute
   '/_protected/admin/dashboard/': typeof ProtectedAdminDashboardIndexRoute
   '/_protected/instructor/dashboard/': typeof ProtectedInstructorDashboardIndexRoute
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin/modules'
     | '/admin/payments'
     | '/admin/posts'
+    | '/admin/sessions'
     | '/admin/users'
     | '/admin/dashboard'
     | '/instructor/dashboard'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/admin/modules'
     | '/admin/payments'
     | '/admin/posts'
+    | '/admin/sessions'
     | '/admin/users'
     | '/admin/dashboard'
     | '/instructor/dashboard'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
     | '/_protected/admin/modules'
     | '/_protected/admin/payments'
     | '/_protected/admin/posts'
+    | '/_protected/admin/sessions'
     | '/_protected/admin/users'
     | '/_protected/admin/dashboard/'
     | '/_protected/instructor/dashboard/'
@@ -309,6 +322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAdminUsersRouteRouteImport
       parentRoute: typeof ProtectedAdminRouteRoute
     }
+    '/_protected/admin/sessions': {
+      id: '/_protected/admin/sessions'
+      path: '/sessions'
+      fullPath: '/admin/sessions'
+      preLoaderRoute: typeof ProtectedAdminSessionsRouteRouteImport
+      parentRoute: typeof ProtectedAdminRouteRoute
+    }
     '/_protected/admin/posts': {
       id: '/_protected/admin/posts'
       path: '/posts'
@@ -374,6 +394,7 @@ interface ProtectedAdminRouteRouteChildren {
   ProtectedAdminModulesRouteRoute: typeof ProtectedAdminModulesRouteRoute
   ProtectedAdminPaymentsRouteRoute: typeof ProtectedAdminPaymentsRouteRoute
   ProtectedAdminPostsRouteRoute: typeof ProtectedAdminPostsRouteRoute
+  ProtectedAdminSessionsRouteRoute: typeof ProtectedAdminSessionsRouteRoute
   ProtectedAdminUsersRouteRoute: typeof ProtectedAdminUsersRouteRoute
   ProtectedAdminDashboardIndexRoute: typeof ProtectedAdminDashboardIndexRoute
 }
@@ -384,6 +405,7 @@ const ProtectedAdminRouteRouteChildren: ProtectedAdminRouteRouteChildren = {
   ProtectedAdminModulesRouteRoute: ProtectedAdminModulesRouteRoute,
   ProtectedAdminPaymentsRouteRoute: ProtectedAdminPaymentsRouteRoute,
   ProtectedAdminPostsRouteRoute: ProtectedAdminPostsRouteRoute,
+  ProtectedAdminSessionsRouteRoute: ProtectedAdminSessionsRouteRoute,
   ProtectedAdminUsersRouteRoute: ProtectedAdminUsersRouteRoute,
   ProtectedAdminDashboardIndexRoute: ProtectedAdminDashboardIndexRoute,
 }

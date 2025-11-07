@@ -13,6 +13,7 @@ import {
   type LucideIcon,
   Layers,
   Boxes,
+  Brackets,
 } from 'lucide-react'
 import type { UserRole } from '@/routes/__root'
 
@@ -66,6 +67,12 @@ export const navigationMain: NavigationItem[] = [
     title: 'Gestion des Leçons',
     url: '/admin/lessons',
     icon: Boxes,
+    allowedRoles: ['admin'],
+  },
+  {
+    title: 'Gestion des Sessions',
+    url: '/admin/sessions',
+    icon: Brackets,
     allowedRoles: ['admin'],
   },
   {

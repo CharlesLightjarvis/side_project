@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignUuid('student_id')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('course_session_id')->constrained('course_sessions')->cascadeOnDelete();
             $table->dateTime('enrollment_date');
-            $table->string('status')->default(EnrollmentStatus::PENDING);
-            $table->string('payment_status')->default(PaymentStatus::UNPAID);
+            $table->string('status')->default(EnrollmentStatus::PENDING->value);
+            $table->string('payment_status')->default(PaymentStatus::UNPAID->value);
             $table->decimal('payment_amount', 10, 2)->nullable();
             $table->timestamps();
 

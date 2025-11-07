@@ -39,8 +39,10 @@ class CourseSessionController extends Controller
     {
         $courseSession = $this->courseSessionService->createCourseSession($request->validated());
 
+        $courseSession->load(['formation', 'instructor', 'enrollments.student']);
+
         return $this->createdSuccessResponse(
-            new CourseSessionResource($courseSession),
+            CourseSessionResource::make($courseSession),
             'Course session created successfully'
         );
     }
@@ -53,7 +55,7 @@ class CourseSessionController extends Controller
         $courseSession->load(['formation', 'instructor', 'enrollments.student']);
 
         return $this->successResponse(
-            new CourseSessionResource($courseSession),
+            CourseSessionResource::make($courseSession),
             'Course session retrieved successfully'
         );
     }
@@ -65,8 +67,10 @@ class CourseSessionController extends Controller
     {
         $courseSession = $this->courseSessionService->updateCourseSession($courseSession, $request->validated());
 
+        $courseSession->load(['formation', 'instructor', 'enrollments.student']);
+
         return $this->successResponse(
-            new CourseSessionResource($courseSession),
+            CourseSessionResource::make($courseSession),
             'Course session updated successfully'
         );
     }

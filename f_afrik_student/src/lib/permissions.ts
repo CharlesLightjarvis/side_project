@@ -47,4 +47,13 @@ export const PERMISSIONS = {
     DELETE: 'delete.lessons',
     MANAGE: 'manage.lessons',
   },
+
+  // Session permissions
+  SESSION: {
+    CREATE: 'create.sessions',
+    READ: 'read.sessions',
+    UPDATE: 'update.sessions',
+    DELETE: 'delete.sessions',
+    MANAGE: 'manage.sessions',
+  },
 } as const

@@ -13,7 +13,9 @@ class CourseSessionService
      */
     public function getAllCourseSessions(): Collection
     {
-        return CourseSession::with(['formation', 'instructor', 'enrollments.student'])->get();
+        return CourseSession::with(['formation', 'instructor', 'enrollments.student'])
+        ->orderBy('created_at','desc')
+        ->get();
     }
 
     /**
@@ -21,9 +23,11 @@ class CourseSessionService
      */
     public function createCourseSession(array $data): CourseSession
     {
-        return DB::transaction(function () use ($data) {
+        $courseSession = DB::transaction(function () use ($data) {
             return CourseSession::create($data);
         });
+
+        return $courseSession->fresh();
     }
 
     /**

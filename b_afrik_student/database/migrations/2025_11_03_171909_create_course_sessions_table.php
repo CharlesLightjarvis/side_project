@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignUuid('instructor_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->string('status')->default(SessionStatus::SCHEDULED);
+            $table->string('status')->default(SessionStatus::SCHEDULED->value);
             $table->integer('max_students')->default(30);
             $table->string('location')->nullable();
             $table->timestamps();
