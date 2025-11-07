@@ -53,13 +53,25 @@ class CourseSessionService
     }
 
     /**
-     * Get course sessions by instructor.
+     *  Get course sessions by instructor.
      */
     public function getCourseSessionsByInstructor(string $instructorId): Collection
     {
         return CourseSession::where('instructor_id', $instructorId)
             ->with(['formation', 'enrollments'])
             ->get();
+    }
+
+    /**
+     * Get course sessions by student.
+     */
+    public function getCourseSessionsByStudent(string $studentId): Collection
+    {
+        return CourseSession::whereHas('enrollments', function ($query) use ($studentId) {
+            $query->where('student_id', $studentId);
+        })
+        ->with(['formation', 'instructor'])
+        ->get();
     }
 
     /**

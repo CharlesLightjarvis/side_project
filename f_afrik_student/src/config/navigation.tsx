@@ -153,27 +153,10 @@ export const navigationMain: NavigationItem[] = [
     allowedRoles: ['instructor'],
   },
   {
-    title: 'Mes formations',
-    url: '/instructor/formations',
-    icon: BookOpen,
+    title: 'Mes Sessions',
+    url: '/instructor/sessions',
+    icon: Brackets,
     allowedRoles: ['instructor'],
-    items: [
-      {
-        title: 'Toutes mes formations',
-        url: '/instructor/formations',
-        allowedRoles: ['instructor'],
-      },
-      {
-        title: 'Créer une formation',
-        url: '/instructor/formations/create',
-        allowedRoles: ['instructor'],
-      },
-      {
-        title: 'Brouillons',
-        url: '/instructor/formations/drafts',
-        allowedRoles: ['instructor'],
-      },
-    ],
   },
   {
     title: 'Mes étudiants',
@@ -240,6 +223,12 @@ export const navigationMain: NavigationItem[] = [
     title: 'Dashboard',
     url: '/student/dashboard',
     icon: LayoutDashboard,
+    allowedRoles: ['student'],
+  },
+  {
+    title: 'Mes Sessions',
+    url: '/student/sessions',
+    icon: Brackets,
     allowedRoles: ['student'],
   },
   {

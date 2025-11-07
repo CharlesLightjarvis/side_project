@@ -21,6 +21,11 @@ Route::apiResource('formations', FormationController::class);
 Route::apiResource('course-sessions', CourseSessionController::class);
 Route::apiResource('enrollments', EnrollmentController::class);
 
+Route::get('/instructors/{instructorId}/course-sessions', [CourseSessionController::class, 'getCourseSessionsByInstructor']);
+
+Route::get('/students/{studentId}/course-sessions', [CourseSessionController::class, 'getCourseSessionsByStudent']);
+
+
 // Enrollment actions
 Route::post('enrollments/{enrollment}/confirm', [EnrollmentController::class, 'confirm']);
 Route::post('enrollments/{enrollment}/cancel', [EnrollmentController::class, 'cancelEnrollment']);

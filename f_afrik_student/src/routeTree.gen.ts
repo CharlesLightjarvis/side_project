@@ -17,6 +17,8 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as ProtectedStudentRouteRouteImport } from './routes/_protected/student/route'
 import { Route as ProtectedInstructorRouteRouteImport } from './routes/_protected/instructor/route'
 import { Route as ProtectedAdminRouteRouteImport } from './routes/_protected/admin/route'
+import { Route as ProtectedStudentSessionsRouteRouteImport } from './routes/_protected/student/sessions/route'
+import { Route as ProtectedInstructorSessionsRouteRouteImport } from './routes/_protected/instructor/sessions/route'
 import { Route as ProtectedAdminUsersRouteRouteImport } from './routes/_protected/admin/users/route'
 import { Route as ProtectedAdminSessionsRouteRouteImport } from './routes/_protected/admin/sessions/route'
 import { Route as ProtectedAdminPostsRouteRouteImport } from './routes/_protected/admin/posts/route'
@@ -68,6 +70,18 @@ const ProtectedAdminRouteRoute = ProtectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedStudentSessionsRouteRoute =
+  ProtectedStudentSessionsRouteRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => ProtectedStudentRouteRoute,
+  } as any)
+const ProtectedInstructorSessionsRouteRoute =
+  ProtectedInstructorSessionsRouteRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => ProtectedInstructorRouteRoute,
+  } as any)
 const ProtectedAdminUsersRouteRoute =
   ProtectedAdminUsersRouteRouteImport.update({
     id: '/users',
@@ -144,6 +158,8 @@ export interface FileRoutesByFullPath {
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
+  '/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
   '/instructor/dashboard': typeof ProtectedInstructorDashboardIndexRoute
   '/student/dashboard': typeof ProtectedStudentDashboardIndexRoute
@@ -163,6 +179,8 @@ export interface FileRoutesByTo {
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
+  '/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
   '/instructor/dashboard': typeof ProtectedInstructorDashboardIndexRoute
   '/student/dashboard': typeof ProtectedStudentDashboardIndexRoute
@@ -184,6 +202,8 @@ export interface FileRoutesById {
   '/_protected/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/_protected/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/_protected/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/_protected/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
+  '/_protected/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/_protected/admin/dashboard/': typeof ProtectedAdminDashboardIndexRoute
   '/_protected/instructor/dashboard/': typeof ProtectedInstructorDashboardIndexRoute
   '/_protected/student/dashboard/': typeof ProtectedStudentDashboardIndexRoute
@@ -205,6 +225,8 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/sessions'
     | '/admin/users'
+    | '/instructor/sessions'
+    | '/student/sessions'
     | '/admin/dashboard'
     | '/instructor/dashboard'
     | '/student/dashboard'
@@ -224,6 +246,8 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/sessions'
     | '/admin/users'
+    | '/instructor/sessions'
+    | '/student/sessions'
     | '/admin/dashboard'
     | '/instructor/dashboard'
     | '/student/dashboard'
@@ -244,6 +268,8 @@ export interface FileRouteTypes {
     | '/_protected/admin/posts'
     | '/_protected/admin/sessions'
     | '/_protected/admin/users'
+    | '/_protected/instructor/sessions'
+    | '/_protected/student/sessions'
     | '/_protected/admin/dashboard/'
     | '/_protected/instructor/dashboard/'
     | '/_protected/student/dashboard/'
@@ -314,6 +340,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof ProtectedAdminRouteRouteImport
       parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/student/sessions': {
+      id: '/_protected/student/sessions'
+      path: '/sessions'
+      fullPath: '/student/sessions'
+      preLoaderRoute: typeof ProtectedStudentSessionsRouteRouteImport
+      parentRoute: typeof ProtectedStudentRouteRoute
+    }
+    '/_protected/instructor/sessions': {
+      id: '/_protected/instructor/sessions'
+      path: '/sessions'
+      fullPath: '/instructor/sessions'
+      preLoaderRoute: typeof ProtectedInstructorSessionsRouteRouteImport
+      parentRoute: typeof ProtectedInstructorRouteRoute
     }
     '/_protected/admin/users': {
       id: '/_protected/admin/users'
@@ -414,11 +454,14 @@ const ProtectedAdminRouteRouteWithChildren =
   ProtectedAdminRouteRoute._addFileChildren(ProtectedAdminRouteRouteChildren)
 
 interface ProtectedInstructorRouteRouteChildren {
+  ProtectedInstructorSessionsRouteRoute: typeof ProtectedInstructorSessionsRouteRoute
   ProtectedInstructorDashboardIndexRoute: typeof ProtectedInstructorDashboardIndexRoute
 }
 
 const ProtectedInstructorRouteRouteChildren: ProtectedInstructorRouteRouteChildren =
   {
+    ProtectedInstructorSessionsRouteRoute:
+      ProtectedInstructorSessionsRouteRoute,
     ProtectedInstructorDashboardIndexRoute:
       ProtectedInstructorDashboardIndexRoute,
   }
@@ -429,10 +472,12 @@ const ProtectedInstructorRouteRouteWithChildren =
   )
 
 interface ProtectedStudentRouteRouteChildren {
+  ProtectedStudentSessionsRouteRoute: typeof ProtectedStudentSessionsRouteRoute
   ProtectedStudentDashboardIndexRoute: typeof ProtectedStudentDashboardIndexRoute
 }
 
 const ProtectedStudentRouteRouteChildren: ProtectedStudentRouteRouteChildren = {
+  ProtectedStudentSessionsRouteRoute: ProtectedStudentSessionsRouteRoute,
   ProtectedStudentDashboardIndexRoute: ProtectedStudentDashboardIndexRoute,
 }
 

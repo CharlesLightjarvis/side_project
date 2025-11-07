@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware'
-import type { Session, CreateSessionData, UpdateSessionData } from '@/types/session'
+import type { Session, CreateSessionData, UpdateSessionData, InstructorSession, StudentSession } from '@/types/session'
 import { sessionService } from '@/services/session-service'
 
 interface SessionState {
   sessions: Session[]
+  instructorSessions: InstructorSession[]
+  studentSessions: StudentSession[]
   currentSession: Session | null
   loading: boolean
   error: string | null
@@ -13,6 +15,8 @@ interface SessionState {
 interface SessionActions {
   fetchSessions: () => Promise<void>
   fetchSession: (id: string) => Promise<void>
+  fetchInstructorSessions: (instructorId: string) => Promise<void>
+  fetchStudentSessions: (studentId: string) => Promise<void>
   createSession: (data: CreateSessionData) => Promise<{
     success: boolean
     message?: string
@@ -42,6 +46,8 @@ export const useSessionStore = create<SessionStore>()(
     subscribeWithSelector((set, get) => ({
       // Initial state
       sessions: [],
+      instructorSessions: [],
+      studentSessions: [],
       currentSession: null,
       loading: false,
       error: null,
@@ -87,6 +93,54 @@ export const useSessionStore = create<SessionStore>()(
             currentSession: null,
             loading: false,
             error: error.message || 'Erreur lors du chargement de la session',
+          })
+        }
+      },
+
+      // Fetch instructor sessions from API
+      fetchInstructorSessions: async (instructorId: string) => {
+        // Prevent duplicate calls
+        if (get().loading) return
+
+        set({ loading: true, error: null })
+        try {
+          const instructorSessions = await sessionService.getInstructorSessions(instructorId)
+          set({
+            instructorSessions,
+            loading: false,
+            error: null,
+          })
+          console.log('✅ Instructor sessions fetched:', instructorSessions.length)
+        } catch (error: any) {
+          console.error('❌ Failed to fetch instructor sessions:', error.message)
+          set({
+            instructorSessions: [],
+            loading: false,
+            error: error.message || 'Erreur lors du chargement des sessions',
+          })
+        }
+      },
+
+      // Fetch student sessions from API
+      fetchStudentSessions: async (studentId: string) => {
+        // Prevent duplicate calls
+        if (get().loading) return
+
+        set({ loading: true, error: null })
+        try {
+          const studentSessions = await sessionService.getStudentSessions(studentId)
+          set({
+            studentSessions,
+            loading: false,
+            error: null,
+          })
+          console.log('✅ Student sessions fetched:', studentSessions.length)
+        } catch (error: any) {
+          console.error('❌ Failed to fetch student sessions:', error.message)
+          set({
+            studentSessions: [],
+            loading: false,
+            error: error.message || 'Erreur lors du chargement des sessions',
           })
         }
       },

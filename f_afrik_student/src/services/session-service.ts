@@ -4,8 +4,12 @@ import type {
   SessionFromBackend,
   CreateSessionData,
   UpdateSessionData,
+  InstructorSession,
+  InstructorSessionFromBackend,
+  StudentSession,
+  StudentSessionFromBackend,
 } from '@/types/session'
-import { transformSession } from '@/types/session'
+import { transformSession, transformInstructorSession, transformStudentSession } from '@/types/session'
 
 interface ApiResponse<T> {
   success: boolean
@@ -130,6 +134,39 @@ class SessionService {
       }
       throw error
     }
+  }
+
+  /**
+   * GET - Retrieve sessions for the authenticated instructor
+   */
+  async getInstructorSessions(instructorId: string): Promise<InstructorSession[]> {
+    const response = await api.get<ApiResponse<InstructorSessionFromBackend[]>>(
+      `/api/instructors/${instructorId}/course-sessions`,
+    )
+    return response.data.data.map(transformInstructorSession)
+  }
+
+  /**
+   * GET - Retrieve sessions for the authenticated student
+   */
+  async getStudentSessions(studentId: string): Promise<StudentSession[]> {
+    console.log('📤 Fetching student sessions for studentId:', studentId)
+
+    const response = await api.get<ApiResponse<StudentSessionFromBackend[]>>(
+      `/api/students/${studentId}/course-sessions`,
+    )
+
+    console.log('🔍 Raw backend response (STUDENT):', response.data)
+    console.log('🔍 Number of sessions received:', response.data.data?.length || 0)
+
+    if (response.data.data && response.data.data.length > 0) {
+      console.log('🔍 First session (before transform):', response.data.data[0])
+      const transformed = response.data.data.map(transformStudentSession)
+      console.log('✅ First session (after transform):', transformed[0])
+      return transformed
+    }
+
+    return []
   }
 }
 

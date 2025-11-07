@@ -84,4 +84,25 @@ class CourseSessionController extends Controller
 
         return $this->deletedSuccessResponse('Course session deleted successfully');
     }
+
+    public function getCourseSessionsByInstructor(string $instructorId): JsonResponse
+    {
+        $courseSessions = $this->courseSessionService->getCourseSessionsByInstructor($instructorId);
+
+        return $this->successResponse(
+            CourseSessionResource::collection($courseSessions),
+            'Course sessions retrieved successfully for instructor'
+        );
+    }
+
+    public function getCourseSessionsByStudent(string $studentId): JsonResponse
+    {
+        $courseSessions = $this->courseSessionService->getCourseSessionsByStudent($studentId);
+
+        return $this->successResponse(
+            CourseSessionResource::collection($courseSessions),
+            'Course sessions retrieved successfully for student'
+        );
+    }
+
 }
