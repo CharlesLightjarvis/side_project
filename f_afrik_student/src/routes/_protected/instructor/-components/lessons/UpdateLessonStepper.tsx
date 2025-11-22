@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Stepper, StepperHeader, StepperContent } from '@/components/ui/stepper'
 import {
   Select,
@@ -28,12 +29,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  createLessonSchema,
-  createLessonDefaultValues,
-  type CreateLessonFormData,
+  updateLessonSchema,
+  getUpdateLessonDefaultValues,
+  type UpdateLessonFormData,
 } from '@/schemas/lesson-schema'
 import { useLessonStore } from '@/stores/lesson-store'
 import { useModules } from '@/hooks/use-modules'
+import type { Lesson, Attachment } from '@/types/lesson'
 import {
   Trash2Icon,
   AlertCircleIcon,
@@ -47,10 +49,12 @@ import {
   HeadphonesIcon,
   ImageIcon,
   PlusIcon,
+  ExternalLinkIcon,
 } from 'lucide-react'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 
-interface CreateLessonStepperProps {
+interface UpdateLessonStepperProps {
+  lesson: Lesson | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -135,6 +139,35 @@ const getFileIcon = (file: { file: File }) => {
   return <FileIcon className="size-5 opacity-60" />
 }
 
+const getAttachmentIcon = (attachment: Attachment) => {
+  if (attachment.is_external) {
+    return <ExternalLinkIcon className="size-5 opacity-60" />
+  }
+
+  const type = attachment.type.toLowerCase()
+
+  if (type.includes('pdf') || type.includes('word') || type.includes('document')) {
+    return <FileTextIcon className="size-5 opacity-60" />
+  }
+  if (type.includes('zip') || type.includes('archive')) {
+    return <FileArchiveIcon className="size-5 opacity-60" />
+  }
+  if (type.includes('excel') || type.includes('spreadsheet')) {
+    return <FileSpreadsheetIcon className="size-5 opacity-60" />
+  }
+  if (type.includes('video')) {
+    return <VideoIcon className="size-5 opacity-60" />
+  }
+  if (type.includes('audio')) {
+    return <HeadphonesIcon className="size-5 opacity-60" />
+  }
+  if (type.includes('image')) {
+    return <ImageIcon className="size-5 opacity-60" />
+  }
+
+  return <FileIcon className="size-5 opacity-60" />
+}
+
 const getFilePreview = (file: { file: File; preview?: string }) => {
   const fileType = file.file.type
 
@@ -157,18 +190,49 @@ const getFilePreview = (file: { file: File; preview?: string }) => {
   )
 }
 
-export function CreateLessonStepper({
+const getAttachmentPreview = (attachment: Attachment) => {
+  const renderImage = (src: string) => (
+    <img
+      src={src}
+      alt={attachment.name}
+      className="size-full rounded-t-[inherit] object-cover"
+    />
+  )
+
+  return (
+    <div className="flex aspect-square items-center justify-center overflow-hidden rounded-t-[inherit] bg-accent">
+      {attachment.type.startsWith('image/') && attachment.url ? (
+        renderImage(attachment.url)
+      ) : (
+        getAttachmentIcon(attachment)
+      )}
+    </div>
+  )
+}
+
+export function UpdateLessonStepper({
+  lesson,
   open,
   onOpenChange,
-}: CreateLessonStepperProps) {
-  const { createLesson, loading } = useLessonStore()
+}: UpdateLessonStepperProps) {
+  const { updateLesson, loading } = useLessonStore()
   const { modules, fetchModules } = useModules()
   const [currentStep, setCurrentStep] = React.useState(0)
+  const [attachmentsToDelete, setAttachmentsToDelete] = React.useState<string[]>([])
 
   // Initialize form
-  const form = useForm<CreateLessonFormData>({
-    resolver: zodResolver(createLessonSchema),
-    defaultValues: createLessonDefaultValues,
+  const form = useForm<UpdateLessonFormData>({
+    resolver: zodResolver(updateLessonSchema),
+    defaultValues: lesson
+      ? getUpdateLessonDefaultValues(lesson)
+      : {
+          title: '',
+          content: null,
+          order: 1,
+          module_id: '',
+          attachments: [],
+          external_links: [],
+        },
     mode: 'onChange',
   })
 
@@ -211,12 +275,32 @@ export function CreateLessonStepper({
     append({ url: '', name: '', type: 'other' })
   }
 
+  // Mark attachment for deletion
+  const handleDeleteAttachment = (attachmentId: string) => {
+    setAttachmentsToDelete((prev) => [...prev, attachmentId])
+  }
+
+  // Check if attachment is marked for deletion
+  const isMarkedForDeletion = (attachmentId: string) => {
+    return attachmentsToDelete.includes(attachmentId)
+  }
+
+  // Fetch modules and populate form when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      fetchModules()
+      if (lesson) {
+        form.reset(getUpdateLessonDefaultValues(lesson))
+      }
+      setAttachmentsToDelete([]) // Reset deletion list
+    }
+  }, [open, fetchModules, lesson, form])
+
   // Validate current step
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 0) {
-      // Step 1: Basic info (only title is required)
-      const result = await form.trigger('title')
-      return result
+      // Step 1: Basic info (all optional for update)
+      return true
     } else if (step === 1) {
       // Step 2: Files (optional)
       return true
@@ -247,7 +331,9 @@ export function CreateLessonStepper({
   }
 
   // Handle form submission
-  const onSubmit = async (data: CreateLessonFormData) => {
+  const onSubmit = async (data: UpdateLessonFormData) => {
+    if (!lesson?.id) return
+
     // Only allow submission at the last step
     if (currentStep !== STEPS.length - 1) {
       console.log(
@@ -259,12 +345,18 @@ export function CreateLessonStepper({
 
     console.log('✅ Submitting form at step:', currentStep)
     console.log('📦 Data:', data)
+    console.log('🗑️ Attachments to delete:', attachmentsToDelete)
 
-    const result = await createLesson(data)
+    // Add delete_attachments to the data
+    const updateData: UpdateLessonFormData = {
+      ...data,
+      delete_attachments: attachmentsToDelete.length > 0 ? attachmentsToDelete : undefined,
+    }
+
+    const result = await updateLesson(lesson.id, updateData)
 
     if (result.success) {
-      toast.success(result.message || 'Leçon créée avec succès')
-      form.reset()
+      toast.success(result.message || 'Leçon mise à jour avec succès')
       setCurrentStep(0)
       clearFiles()
       onOpenChange(false)
@@ -275,7 +367,7 @@ export function CreateLessonStepper({
       if (result.errors) {
         Object.entries(result.errors).forEach(([field, messages]) => {
           if (Array.isArray(messages) && messages.length > 0) {
-            form.setError(field as keyof CreateLessonFormData, {
+            form.setError(field as keyof UpdateLessonFormData, {
               type: 'manual',
               message: messages[0],
             })
@@ -285,29 +377,24 @@ export function CreateLessonStepper({
     }
   }
 
-  // Fetch modules when dialog opens
-  React.useEffect(() => {
-    if (open) {
-      fetchModules()
-    }
-  }, [open, fetchModules])
-
   // Reset form when dialog closes
   React.useEffect(() => {
     if (!open) {
-      form.reset(createLessonDefaultValues)
       setCurrentStep(0)
       clearFiles()
+      setAttachmentsToDelete([])
     }
-  }, [open, form, clearFiles])
+  }, [open, clearFiles])
+
+  if (!lesson) return null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="min-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Créer une nouvelle leçon</DialogTitle>
+          <DialogTitle>Modifier la leçon</DialogTitle>
           <DialogDescription>
-            Complétez les informations en 3 étapes simples
+            Modifiez les informations en 3 étapes simples
           </DialogDescription>
         </DialogHeader>
 
@@ -319,7 +406,7 @@ export function CreateLessonStepper({
           <StepperHeader />
 
           <form
-            id="lesson-create-form"
+            id="lesson-update-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6"
           >
@@ -373,16 +460,16 @@ export function CreateLessonStepper({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="module_id">
-                        Module (optionnel)
-                      </FieldLabel>
+                      <FieldLabel htmlFor="module_id">Module</FieldLabel>
                       <Select
+                        key={lesson?.id}
                         onValueChange={field.onChange}
-                        value={field.value || undefined}
+                        value={field.value}
+                        defaultValue={field.value}
                         disabled={loading}
                       >
                         <SelectTrigger id="module_id">
-                          <SelectValue placeholder="Sélectionnez un module (optionnel)" />
+                          <SelectValue placeholder="Sélectionnez un module" />
                         </SelectTrigger>
                         <SelectContent>
                           {modules.map((module) => (
@@ -433,13 +520,54 @@ export function CreateLessonStepper({
             {/* STEP 2: File Uploads */}
             <StepperContent step={1}>
               <FieldGroup>
+                {/* Existing Attachments - Filter only FILE attachments (not external links) */}
+                {lesson.attachments && lesson.attachments.filter(a => !a.is_external).length > 0 && (
+                  <div className="mb-4">
+                    <FieldLabel>Fichiers actuels</FieldLabel>
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mt-2">
+                      {lesson.attachments.filter(a => !a.is_external).map((attachment) => {
+                        const markedForDeletion = isMarkedForDeletion(attachment.id)
+                        return (
+                          <div
+                            key={attachment.id}
+                            className={`relative flex flex-col rounded-md border bg-background ${markedForDeletion ? 'opacity-50' : ''}`}
+                          >
+                            {getAttachmentPreview(attachment)}
+                            <Button
+                              type="button"
+                              onClick={() => handleDeleteAttachment(attachment.id)}
+                              size="icon"
+                              variant={markedForDeletion ? 'default' : 'destructive'}
+                              className="absolute -top-2 -right-2 size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background"
+                              aria-label={markedForDeletion ? 'Annuler la suppression' : 'Supprimer'}
+                              disabled={markedForDeletion}
+                            >
+                              <XIcon className="size-3.5" />
+                            </Button>
+                            <div className="flex min-w-0 flex-col gap-0.5 border-t p-3">
+                              <p className="truncate text-[13px] font-medium">
+                                {attachment.name}
+                              </p>
+                              {markedForDeletion && (
+                                <Badge variant="destructive" className="w-fit text-xs">
+                                  À supprimer
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <Controller
                   name="attachments"
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor="attachments">
-                        Fichiers (optionnel)
+                        Nouveaux fichiers (optionnel)
                       </FieldLabel>
 
                       <div
@@ -460,7 +588,7 @@ export function CreateLessonStepper({
                           <div className="flex w-full flex-col gap-3">
                             <div className="flex items-center justify-between gap-2">
                               <h3 className="truncate text-sm font-medium">
-                                Fichiers ({files.length})
+                                Nouveaux fichiers ({files.length})
                               </h3>
                               <div className="flex gap-2">
                                 <Button
@@ -581,8 +709,63 @@ export function CreateLessonStepper({
               <div className="space-y-6">
                 {/* External Links Section */}
                 <FieldGroup>
+                  {/* Existing External Links - Filter only EXTERNAL links */}
+                  {lesson.attachments && lesson.attachments.filter(a => a.is_external).length > 0 && (
+                    <div className="mb-4">
+                      <FieldLabel>Liens externes actuels</FieldLabel>
+                      <div className="space-y-3 mt-2">
+                        {lesson.attachments.filter(a => a.is_external).map((link) => {
+                          const markedForDeletion = isMarkedForDeletion(link.id)
+                          return (
+                            <div
+                              key={link.id}
+                              className={`flex items-start justify-between gap-3 p-4 border rounded-lg ${markedForDeletion ? 'opacity-50' : ''}`}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className="font-medium text-sm truncate">
+                                    {link.name}
+                                  </p>
+                                  {link.type && (
+                                    <Badge variant="secondary" className="text-xs shrink-0">
+                                      {link.type}
+                                    </Badge>
+                                  )}
+                                  {markedForDeletion && (
+                                    <Badge variant="destructive" className="text-xs shrink-0">
+                                      À supprimer
+                                    </Badge>
+                                  )}
+                                </div>
+                                <a
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-muted-foreground hover:text-foreground truncate block"
+                                >
+                                  {link.url}
+                                </a>
+                              </div>
+                              <Button
+                                type="button"
+                                onClick={() => handleDeleteAttachment(link.id)}
+                                size="icon"
+                                variant={markedForDeletion ? 'default' : 'destructive'}
+                                className="size-8 shrink-0"
+                                aria-label={markedForDeletion ? 'Annuler la suppression' : 'Supprimer'}
+                                disabled={markedForDeletion}
+                              >
+                                <XIcon className="size-4" />
+                              </Button>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between mb-2">
-                    <FieldLabel>Liens externes (optionnel)</FieldLabel>
+                    <FieldLabel>Nouveaux liens externes (optionnel)</FieldLabel>
                     <Button
                       type="button"
                       variant="outline"
@@ -691,7 +874,7 @@ export function CreateLessonStepper({
                   ) : (
                     <div className="text-center py-8 border rounded-lg border-dashed">
                       <p className="text-sm text-muted-foreground">
-                        Aucun lien externe ajouté
+                        Aucun nouveau lien externe ajouté
                       </p>
                     </div>
                   )}
@@ -707,44 +890,80 @@ export function CreateLessonStepper({
                     <div>
                       <p className="text-sm text-muted-foreground">Titre</p>
                       <p className="font-medium">
-                        {form.watch('title') || 'Non défini'}
+                        {form.watch('title') || lesson.title}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-sm text-muted-foreground">Contenu</p>
                       <p className="text-sm">
-                        {form.watch('content') || 'Non défini'}
+                        {form.watch('content') || lesson.content || 'Non défini'}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-sm text-muted-foreground">Module</p>
                       <p className="text-sm">
-                        {modules.find((m) => m.id === form.watch('module_id'))
-                          ?.title || 'Non défini'}
+                        {modules.find(
+                          (m) =>
+                            m.id ===
+                            (form.watch('module_id') || lesson.module_id),
+                        )?.title || 'Non défini'}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-sm text-muted-foreground">Ordre</p>
                       <p className="text-sm">
-                        {form.watch('order') || 'Non défini'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-muted-foreground">Fichiers</p>
-                      <p className="text-sm font-medium">
-                        {files.length > 0
-                          ? `${files.length} fichier${files.length > 1 ? 's' : ''}`
-                          : 'Aucun fichier'}
+                        {form.watch('order') || lesson.order}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-sm text-muted-foreground">
-                        Liens externes
+                        Fichiers actuels
+                      </p>
+                      <p className="text-sm font-medium">
+                        {lesson.attachments?.filter(a => !a.is_external).length || 0} fichier
+                        {(lesson.attachments?.filter(a => !a.is_external).length || 0) > 1 ? 's' : ''}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Liens externes actuels
+                      </p>
+                      <p className="text-sm font-medium">
+                        {lesson.attachments?.filter(a => a.is_external).length || 0} lien
+                        {(lesson.attachments?.filter(a => a.is_external).length || 0) > 1 ? 's' : ''}
+                      </p>
+                    </div>
+
+                    {attachmentsToDelete.length > 0 && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          Éléments à supprimer
+                        </p>
+                        <p className="text-sm font-medium text-destructive">
+                          {attachmentsToDelete.length} élément{attachmentsToDelete.length > 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    )}
+
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Nouveaux fichiers
+                      </p>
+                      <p className="text-sm font-medium">
+                        {files.length > 0
+                          ? `${files.length} fichier${files.length > 1 ? 's' : ''}`
+                          : 'Aucun nouveau fichier'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Nouveaux liens externes
                       </p>
                       <p className="text-sm font-medium">
                         {form.watch('external_links')?.length || 0} lien
@@ -761,7 +980,7 @@ export function CreateLessonStepper({
             {/* Hidden submit button */}
             <button
               type="submit"
-              id="lesson-create-submit-btn"
+              id="lesson-update-submit-btn"
               className="hidden"
               aria-hidden="true"
             />
@@ -787,10 +1006,10 @@ export function CreateLessonStepper({
                 type="button"
                 disabled={loading}
                 onClick={() => {
-                  document.getElementById('lesson-create-submit-btn')?.click()
+                  document.getElementById('lesson-update-submit-btn')?.click()
                 }}
               >
-                {loading ? 'Création...' : 'Créer la leçon'}
+                {loading ? 'Mise à jour...' : 'Mettre à jour la leçon'}
               </Button>
             )}
           </DialogFooter>

@@ -159,6 +159,12 @@ export const navigationMain: NavigationItem[] = [
     allowedRoles: ['instructor'],
   },
   {
+    title: 'Gestion des Leçons',
+    url: '/instructor/lessons',
+    icon: Boxes,
+    allowedRoles: ['instructor'],
+  },
+  {
     title: 'Mes étudiants',
     url: '/instructor/students',
     icon: GraduationCap,

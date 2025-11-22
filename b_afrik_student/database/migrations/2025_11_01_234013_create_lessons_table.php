@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->text('content')->nullable();
-            $table->foreignUuid('module_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('module_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('order')->default(1)->comment('Lesson order within the module');
             $table->timestamps();
         });

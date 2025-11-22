@@ -31,7 +31,7 @@ export interface Lesson {
   title: string
   content: string | null
   order: number
-  module_id: string
+  module_id: string | null
   attachments: Attachment[]
   created_at: string
   updated_at: string
@@ -43,7 +43,7 @@ export interface LessonFromBackend {
   title: string
   content: string | null
   order: number
-  module_id: string
+  module_id: string | null
   attachments: Attachment[]
   created_at: string
   updated_at: string
@@ -54,7 +54,7 @@ export interface CreateLessonData {
   title: string
   content?: string | null
   order?: number
-  module_id?: string // Optionnel car peut être fourni lors de la création du module
+  module_id?: string | null // Optionnel et nullable
   attachments?: File[] | null // Fichiers à uploader
   external_links?: ExternalLink[] | null // Liens externes
 }
@@ -63,7 +63,7 @@ export interface UpdateLessonData {
   title?: string
   content?: string | null
   order?: number
-  module_id?: string
+  module_id?: string | null // Optionnel et nullable
   attachments?: File[] | null // Nouveaux fichiers à uploader
   external_links?: ExternalLink[] | null // Nouveaux liens externes
   delete_attachments?: string[] // IDs des attachments à supprimer

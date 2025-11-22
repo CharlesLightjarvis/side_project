@@ -13,7 +13,8 @@ class ModuleService
      */
     public function getAllModules()
     {
-        return Module::orderBy('created_at', 'desc')->get();
+        return Module::with('lessons')
+                ->orderBy('created_at', 'desc')->get();
     }
 
      /**
@@ -46,14 +47,48 @@ class ModuleService
     }
 
     /**
-     * Update an existing module.
+     * Update an existing module with lessons management.
      */
     public function updateModule(Module $module, array $data)
     {
         return DB::transaction(function () use ($module, $data) {
+            // Extract lessons data and delete_lessons
+            $lessonsData = $data['lessons'] ?? [];
+            $deleteLessons = $data['delete_lessons'] ?? [];
+            unset($data['lessons'], $data['delete_lessons']);
+
+            // Detach specified lessons (set module_id to null instead of deleting)
+            if (!empty($deleteLessons)) {
+                Lesson::whereIn('id', $deleteLessons)
+                    ->where('module_id', $module->id)
+                    ->update(['module_id' => null]);
+            }
+
+            // Update module basic fields
             $module->update($data);
 
-            return $module->fresh();
+            // Handle lessons (create new or update existing)
+            if (!empty($lessonsData)) {
+                foreach ($lessonsData as $lessonData) {
+                    if (isset($lessonData['id'])) {
+                        // Find the lesson by ID (no module_id filter)
+                        $lesson = Lesson::find($lessonData['id']);
+                        
+                        if ($lesson) {
+                            // Assign it to this module
+                            $lessonData['module_id'] = $module->id;
+                            $lesson->update($lessonData);
+                        }
+                    } else {
+                        // Create new lesson
+                        $lessonData['module_id'] = $module->id;
+                        Lesson::create($lessonData);
+                    }
+                }
+            }
+
+            // Load module with its lessons for response
+            return $module->fresh(['lessons']);
         });
     }
 

@@ -25,6 +25,18 @@ class UpdateModuleRequest extends FormRequest
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
             'formation_id' => 'sometimes|required|uuid|exists:formations,id',
+            'order' => 'sometimes|required|integer|min:1',
+
+            // Lessons array (optional, for updating lessons with the module)
+            'lessons' => 'sometimes|nullable|array',
+            'lessons.*.id' => 'sometimes|uuid|exists:lessons,id', // If ID provided, update existing lesson
+            'lessons.*.title' => 'required|string|max:255',
+            'lessons.*.content' => 'nullable|string',
+            'lessons.*.order' => 'required|integer|min:1',
+
+            // Lessons to delete
+            'delete_lessons' => 'sometimes|nullable|array',
+            'delete_lessons.*' => 'uuid|exists:lessons,id',
         ];
     }
 }

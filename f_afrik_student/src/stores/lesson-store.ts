@@ -8,6 +8,7 @@ interface LessonState {
   loading: boolean
   error: string | null
   fetchLessons: () => Promise<void>
+  fetchInstructorLessons: () => Promise<void>
   createLesson: (
     data: CreateLessonData,
   ) => Promise<{
@@ -47,6 +48,24 @@ export const useLessonStore = create<LessonState>()(
             error instanceof Error
               ? error.message
               : 'Erreur lors du chargement des leçons'
+          set({ error: message, loading: false })
+        }
+      },
+
+      fetchInstructorLessons: async () => {
+        // Prevent duplicate calls
+        if (get().loading) return
+
+        set({ loading: true, error: null })
+        try {
+          const lessons = await lessonService.getInstructorLessons()
+          console.log(lessons)
+          set({ lessons, loading: false })
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : 'Erreur lors du chargement des leçons de l\'instructeur'
           set({ error: message, loading: false })
         }
       },

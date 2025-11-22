@@ -214,8 +214,14 @@ export function CreateLessonStepper({
   // Validate current step
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 0) {
-      // Step 1: Basic info (only title is required)
-      const result = await form.trigger('title')
+      // Step 1: Basic info
+      const fields: (keyof CreateLessonFormData)[] = [
+        'title',
+        'content',
+        'module_id',
+        'order',
+      ]
+      const result = await form.trigger(fields)
       return result
     } else if (step === 1) {
       // Step 2: Files (optional)
@@ -373,16 +379,14 @@ export function CreateLessonStepper({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="module_id">
-                        Module (optionnel)
-                      </FieldLabel>
+                      <FieldLabel htmlFor="module_id">Module</FieldLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value || undefined}
+                        value={field.value}
                         disabled={loading}
                       >
                         <SelectTrigger id="module_id">
-                          <SelectValue placeholder="Sélectionnez un module (optionnel)" />
+                          <SelectValue placeholder="Sélectionnez un module" />
                         </SelectTrigger>
                         <SelectContent>
                           {modules.map((module) => (

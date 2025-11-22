@@ -19,7 +19,7 @@ export const createLessonSchema = z.object({
     .int()
     .min(1, "L'ordre doit être au moins 1")
     .optional(),
-  module_id: z.string().uuid('ID de module invalide').optional(),
+  module_id: z.string().uuid('ID de module invalide').optional().nullable(),
   attachments: z.array(z.instanceof(File)).optional().nullable(),
   external_links: z.array(externalLinkSchema).optional().nullable(),
 })
@@ -37,7 +37,7 @@ export const updateLessonSchema = z.object({
     .int()
     .min(1, "L'ordre doit être au moins 1")
     .optional(),
-  module_id: z.string().uuid('ID de module invalide').optional(),
+  module_id: z.string().uuid('ID de module invalide').optional().nullable(),
   attachments: z.array(z.instanceof(File)).optional().nullable(),
   external_links: z.array(externalLinkSchema).optional().nullable(),
   delete_attachments: z.array(z.string().uuid()).optional(),
@@ -53,7 +53,7 @@ export const createLessonDefaultValues: CreateLessonFormData = {
   title: '',
   content: null,
   order: 1,
-  module_id: '',
+  module_id: null,
   attachments: [],
   external_links: [],
 }
@@ -63,7 +63,7 @@ export const getUpdateLessonDefaultValues = (lesson: {
   title: string
   content: string | null
   order: number
-  module_id: string
+  module_id: string | null
 }): UpdateLessonFormData => ({
   title: lesson.title,
   content: lesson.content,

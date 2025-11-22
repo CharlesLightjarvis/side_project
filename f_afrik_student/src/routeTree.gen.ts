@@ -19,6 +19,7 @@ import { Route as ProtectedInstructorRouteRouteImport } from './routes/_protecte
 import { Route as ProtectedAdminRouteRouteImport } from './routes/_protected/admin/route'
 import { Route as ProtectedStudentSessionsRouteRouteImport } from './routes/_protected/student/sessions/route'
 import { Route as ProtectedInstructorSessionsRouteRouteImport } from './routes/_protected/instructor/sessions/route'
+import { Route as ProtectedInstructorLessonsRouteRouteImport } from './routes/_protected/instructor/lessons/route'
 import { Route as ProtectedAdminUsersRouteRouteImport } from './routes/_protected/admin/users/route'
 import { Route as ProtectedAdminSessionsRouteRouteImport } from './routes/_protected/admin/sessions/route'
 import { Route as ProtectedAdminPostsRouteRouteImport } from './routes/_protected/admin/posts/route'
@@ -80,6 +81,12 @@ const ProtectedInstructorSessionsRouteRoute =
   ProtectedInstructorSessionsRouteRouteImport.update({
     id: '/sessions',
     path: '/sessions',
+    getParentRoute: () => ProtectedInstructorRouteRoute,
+  } as any)
+const ProtectedInstructorLessonsRouteRoute =
+  ProtectedInstructorLessonsRouteRouteImport.update({
+    id: '/lessons',
+    path: '/lessons',
     getParentRoute: () => ProtectedInstructorRouteRoute,
   } as any)
 const ProtectedAdminUsersRouteRoute =
@@ -158,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/instructor/lessons': typeof ProtectedInstructorLessonsRouteRoute
   '/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
   '/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/instructor/lessons': typeof ProtectedInstructorLessonsRouteRoute
   '/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
   '/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/admin/dashboard': typeof ProtectedAdminDashboardIndexRoute
@@ -202,6 +211,7 @@ export interface FileRoutesById {
   '/_protected/admin/posts': typeof ProtectedAdminPostsRouteRoute
   '/_protected/admin/sessions': typeof ProtectedAdminSessionsRouteRoute
   '/_protected/admin/users': typeof ProtectedAdminUsersRouteRoute
+  '/_protected/instructor/lessons': typeof ProtectedInstructorLessonsRouteRoute
   '/_protected/instructor/sessions': typeof ProtectedInstructorSessionsRouteRoute
   '/_protected/student/sessions': typeof ProtectedStudentSessionsRouteRoute
   '/_protected/admin/dashboard/': typeof ProtectedAdminDashboardIndexRoute
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/sessions'
     | '/admin/users'
+    | '/instructor/lessons'
     | '/instructor/sessions'
     | '/student/sessions'
     | '/admin/dashboard'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/sessions'
     | '/admin/users'
+    | '/instructor/lessons'
     | '/instructor/sessions'
     | '/student/sessions'
     | '/admin/dashboard'
@@ -268,6 +280,7 @@ export interface FileRouteTypes {
     | '/_protected/admin/posts'
     | '/_protected/admin/sessions'
     | '/_protected/admin/users'
+    | '/_protected/instructor/lessons'
     | '/_protected/instructor/sessions'
     | '/_protected/student/sessions'
     | '/_protected/admin/dashboard/'
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/sessions'
       fullPath: '/instructor/sessions'
       preLoaderRoute: typeof ProtectedInstructorSessionsRouteRouteImport
+      parentRoute: typeof ProtectedInstructorRouteRoute
+    }
+    '/_protected/instructor/lessons': {
+      id: '/_protected/instructor/lessons'
+      path: '/lessons'
+      fullPath: '/instructor/lessons'
+      preLoaderRoute: typeof ProtectedInstructorLessonsRouteRouteImport
       parentRoute: typeof ProtectedInstructorRouteRoute
     }
     '/_protected/admin/users': {
@@ -454,12 +474,14 @@ const ProtectedAdminRouteRouteWithChildren =
   ProtectedAdminRouteRoute._addFileChildren(ProtectedAdminRouteRouteChildren)
 
 interface ProtectedInstructorRouteRouteChildren {
+  ProtectedInstructorLessonsRouteRoute: typeof ProtectedInstructorLessonsRouteRoute
   ProtectedInstructorSessionsRouteRoute: typeof ProtectedInstructorSessionsRouteRoute
   ProtectedInstructorDashboardIndexRoute: typeof ProtectedInstructorDashboardIndexRoute
 }
 
 const ProtectedInstructorRouteRouteChildren: ProtectedInstructorRouteRouteChildren =
   {
+    ProtectedInstructorLessonsRouteRoute: ProtectedInstructorLessonsRouteRoute,
     ProtectedInstructorSessionsRouteRoute:
       ProtectedInstructorSessionsRouteRoute,
     ProtectedInstructorDashboardIndexRoute:

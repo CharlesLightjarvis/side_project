@@ -57,11 +57,6 @@ const lessonSchema = z.object({
     .min(3, 'Le titre requiert au moins 3 caractères')
     .max(255, 'Le titre ne doit pas dépasser 255 caractères'),
   content: z.string().nullable().optional(),
-  link: z
-    .string()
-    .url('Le lien doit être une URL valide')
-    .nullable()
-    .optional(),
 })
 
 type LessonFormData = z.infer<typeof lessonSchema>
@@ -69,7 +64,6 @@ type LessonFormData = z.infer<typeof lessonSchema>
 const lessonDefaultValues: LessonFormData = {
   title: '',
   content: null,
-  link: null,
 }
 
 // Schema for module (without lessons)
@@ -460,29 +454,6 @@ export function CreateModuleStepper({
                               id="lesson-content"
                               placeholder="Contenu de la leçon..."
                               rows={4}
-                              disabled={loading}
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
-
-                      <Controller
-                        name="link"
-                        control={lessonForm.control}
-                        render={({ field, fieldState }) => (
-                          <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="lesson-link">
-                              Lien vidéo (optionnel)
-                            </FieldLabel>
-                            <Input
-                              {...field}
-                              value={field.value || ''}
-                              id="lesson-link"
-                              type="url"
-                              placeholder="https://www.youtube.com/watch?v=..."
                               disabled={loading}
                             />
                             {fieldState.invalid && (

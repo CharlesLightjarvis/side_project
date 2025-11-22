@@ -41,6 +41,21 @@ export class LessonService {
     }
   }
 
+  async getInstructorLessons(): Promise<Lesson[]> {
+    try {
+      const response =
+        await api.get<ApiResponse<LessonFromBackend[]>>('/api/instructor/lessons')
+      return response.data.data.map(transformLesson)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(
+          error.message || 'Erreur lors de la récupération des leçons de l\'instructeur',
+        )
+      }
+      throw new Error('Erreur lors de la récupération des leçons de l\'instructeur')
+    }
+  }
+
   async getLesson(id: string): Promise<Lesson> {
     try {
       const response = await api.get<ApiResponse<LessonFromBackend>>(

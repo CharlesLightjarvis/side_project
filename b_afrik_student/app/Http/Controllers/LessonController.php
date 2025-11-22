@@ -7,6 +7,9 @@ use App\Http\Requests\lessons\UpdateLessonRequest;
 use App\Http\Resources\LessonResource;
 use App\Models\Lesson;
 use App\Services\LessonService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {
@@ -65,5 +68,23 @@ class LessonController extends Controller
     {
         $this->lessonService->deleteLesson($lesson);
         return $this->deletedSuccessResponse('Lesson deleted successfully');
+    }
+
+    /**
+     * Get all lessons that the authenticated instructor teaches.
+     */
+    public function getInstructorLessons(Request $request)
+    {
+        $courseSessionId = $request->query('course_session_id');
+
+        $lessons = $this->lessonService->getInstructorLessons(
+            Auth::user(),
+            $courseSessionId
+        );
+
+        return $this->successResponse(
+            LessonResource::collection($lessons),
+            'Instructor lessons retrieved successfully'
+        );
     }
 }

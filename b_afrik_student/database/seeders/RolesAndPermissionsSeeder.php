@@ -83,6 +83,11 @@ class RolesAndPermissionsSeeder extends Seeder
         if ($instructor) {
             $instructor->syncPermissions([
                 PermissionEnum::READ_USERS->value,
+                
+                PermissionEnum::CREATE_LESSONS->value,
+                PermissionEnum::READ_LESSONS->value,
+                PermissionEnum::UPDATE_LESSONS->value,
+                PermissionEnum::DELETE_LESSONS->value,
             ]);
         }
 

@@ -29,7 +29,6 @@ class StoreModuleRequest extends FormRequest
             'lessons' => 'nullable|array',
             'lessons.*.title' => 'required|string|max:255',
             'lessons.*.content' => 'nullable|string',
-            'lessons.*.link' => 'nullable|url',
             'lessons.*.order' => 'nullable|integer|min:1',
         ];
     }

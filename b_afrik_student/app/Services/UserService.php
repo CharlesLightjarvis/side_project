@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserService
 {
@@ -23,13 +22,13 @@ class UserService
     public function createUser(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $password = Hash::make(Str::random(8));
+            $password = Hash::make('password');
 
             $user = User::create($data + ['password' => $password]);
             $user->assignRole($data['role']);
             $user->syncPermissions($data['permissions'] ?? []);
 
-            return $user;
+            return $user->fresh();
         });
     }
 

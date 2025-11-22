@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Lesson;
 use App\Models\Attachment;
+use App\Models\ModuleSessionInstructor;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
@@ -18,6 +20,43 @@ class LessonService
         return Lesson::with('attachments')
                 ->orderBy('created_at', 'desc')
                 ->get();
+    }
+
+    /**
+     * Get all lessons that an instructor teaches via their module assignments.
+     *
+     * @param User $instructor
+     * @param string|null $courseSessionId
+     * @return \Illuminate\Support\Collection
+     */
+    public function getInstructorLessons(User $instructor, ?string $courseSessionId = null)
+    {
+        $query = ModuleSessionInstructor::where('instructor_id', $instructor->id)
+            ->whereNull('ended_at') // Only active assignments
+            ->with(['module.lessons.attachments', 'module.formation']);
+
+        if ($courseSessionId) {
+            $query->where('course_session_id', $courseSessionId);
+        }
+
+        $moduleAssignments = $query->get();
+
+        // Flatten lessons from all modules with module and formation info
+        return $moduleAssignments->flatMap(function ($assignment) {
+            return $assignment->module->lessons->map(function ($lesson) use ($assignment) {
+                // Add module and formation info to each lesson
+                $lesson->module_info = [
+                    'id' => $assignment->module->id,
+                    'title' => $assignment->module->title,
+                    'formation' => [
+                        'id' => $assignment->module->formation->id,
+                        'title' => $assignment->module->formation->title,
+                    ],
+                ];
+                $lesson->attachments_count = $lesson->attachments->count();
+                return $lesson;
+            });
+        });
     }
 
     /**

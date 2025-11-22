@@ -24,7 +24,7 @@ class StoreLessonRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'module_id' => 'required|uuid|exists:modules,id',
+            'module_id' => 'nullable|uuid|exists:modules,id',
             'order' => 'nullable|integer|min:1',
 
             // Attachments - multiple files (uploaded)

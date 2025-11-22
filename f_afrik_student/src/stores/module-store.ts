@@ -51,7 +51,7 @@ export const useModuleStore = create<ModuleStore>()(
         try {
           const modules = await moduleService.getAllModules()
           set({ modules, loading: false, error: null })
-          console.log('✅ Modules fetched:', modules.length)
+          console.log('✅ Modules fetched:', modules)
         } catch (error: any) {
           console.error('❌ Failed to fetch modules:', error.message)
           set({

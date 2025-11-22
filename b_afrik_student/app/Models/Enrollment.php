@@ -64,8 +64,8 @@ class Enrollment extends Model
     /**
      * Mark as completed.
      */
-    public function complete(): void
+    public function confirm(): void
     {
-        $this->update(['status' => EnrollmentStatus::COMPLETED]);
+        $this->update(['status' => EnrollmentStatus::CONFIRMED]);
     }
 }

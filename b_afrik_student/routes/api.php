@@ -9,6 +9,7 @@ use App\Http\Controllers\FormationController;
 use App\Http\Controllers\CourseSessionController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\AttachmentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -37,7 +38,11 @@ Route::get('course-sessions/{courseSession}/students', [CourseSessionController:
 
 
 
+// Instructor routes
 Route::get('instructors/{instructorId}/course-sessions', [CourseSessionController::class, 'getCourseSessionsByInstructor']);
+Route::get('instructor/lessons', [LessonController::class, 'getInstructorLessons']);
+
+
 
 Route::get('students/{studentId}/course-sessions', [CourseSessionController::class, 'getCourseSessionsByStudent']);
 
@@ -51,6 +56,7 @@ Route::get('lessons/{lessonId}/progress', [ProgressController::class, 'getLesson
 Route::get('students/{studentId}/progress', [ProgressController::class, 'getStudentProgress']);
 Route::get('students/{studentId}/formations/{formationId}/completion', [ProgressController::class, 'getFormationCompletion']);
 Route::get('students/{studentId}/modules/{moduleId}/completion', [ProgressController::class, 'getModuleCompletion']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return response()->json([

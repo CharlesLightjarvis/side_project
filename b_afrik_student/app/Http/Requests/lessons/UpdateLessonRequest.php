@@ -24,7 +24,7 @@ class UpdateLessonRequest extends FormRequest
         return [
             'title' => 'sometimes|required|string|max:255',
             'content' => 'sometimes|nullable|string',
-            'module_id' => 'sometimes|required|uuid|exists:modules,id',
+            'module_id' => 'sometimes|nullable|uuid|exists:modules,id',
             'link' => 'sometimes|nullable|url',
             'order' => 'sometimes|nullable|integer|min:1',
 

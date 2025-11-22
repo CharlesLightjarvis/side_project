@@ -229,7 +229,7 @@ export function UpdateLessonStepper({
           title: '',
           content: null,
           order: 1,
-          module_id: '',
+          module_id: null,
           attachments: [],
           external_links: [],
         },
@@ -460,16 +460,18 @@ export function UpdateLessonStepper({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="module_id">Module</FieldLabel>
+                      <FieldLabel htmlFor="module_id">
+                        Module (optionnel)
+                      </FieldLabel>
                       <Select
                         key={lesson?.id}
                         onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
+                        value={field.value || undefined}
+                        defaultValue={field.value || undefined}
                         disabled={loading}
                       >
                         <SelectTrigger id="module_id">
-                          <SelectValue placeholder="Sélectionnez un module" />
+                          <SelectValue placeholder="Sélectionnez un module (optionnel)" />
                         </SelectTrigger>
                         <SelectContent>
                           {modules.map((module) => (
@@ -491,9 +493,7 @@ export function UpdateLessonStepper({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="order">
-                        Ordre (optionnel)
-                      </FieldLabel>
+                      <FieldLabel htmlFor="order">Ordre</FieldLabel>
                       <Input
                         {...field}
                         value={field.value || ''}
@@ -501,11 +501,10 @@ export function UpdateLessonStepper({
                         type="number"
                         min={1}
                         placeholder="1"
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? parseInt(e.target.value) : undefined,
-                          )
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value
+                          field.onChange(value ? parseInt(value, 10) : 1)
+                        }}
                         disabled={loading}
                       />
                       {fieldState.invalid && (
