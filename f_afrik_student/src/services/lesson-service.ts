@@ -20,6 +20,7 @@ const transformLesson = (lesson: LessonFromBackend): Lesson => {
     attachments: lesson.attachments,
     order: lesson.order,
     module_id: lesson.module_id,
+    module: lesson.module,
     created_at: lesson.created_at,
     updated_at: lesson.updated_at,
   }
@@ -43,16 +44,20 @@ export class LessonService {
 
   async getInstructorLessons(): Promise<Lesson[]> {
     try {
-      const response =
-        await api.get<ApiResponse<LessonFromBackend[]>>('/api/instructor/lessons')
+      const response = await api.get<ApiResponse<LessonFromBackend[]>>(
+        '/api/instructor/lessons',
+      )
       return response.data.data.map(transformLesson)
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(
-          error.message || 'Erreur lors de la récupération des leçons de l\'instructeur',
+          error.message ||
+            "Erreur lors de la récupération des leçons de l'instructeur",
         )
       }
-      throw new Error('Erreur lors de la récupération des leçons de l\'instructeur')
+      throw new Error(
+        "Erreur lors de la récupération des leçons de l'instructeur",
+      )
     }
   }
 

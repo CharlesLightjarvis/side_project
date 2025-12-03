@@ -13,7 +13,7 @@ class ModuleService
      */
     public function getAllModules()
     {
-        return Module::with('lessons')
+        return Module::with('lessons', 'formation')
                 ->orderBy('created_at', 'desc')->get();
     }
 
@@ -42,7 +42,7 @@ class ModuleService
             }
 
             // Load module with its lessons for response
-            return $module->load('lessons');
+            return $module->load('lessons', 'formation');
         });
     }
 
@@ -88,7 +88,7 @@ class ModuleService
             }
 
             // Load module with its lessons for response
-            return $module->fresh(['lessons']);
+            return $module->fresh(['lessons', 'formation']);
         });
     }
 

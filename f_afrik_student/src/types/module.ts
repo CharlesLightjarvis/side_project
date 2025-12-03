@@ -1,9 +1,11 @@
+import type { Formation } from './formation'
 import type { Lesson, CreateLessonData, UpdateLessonData } from './lesson'
 
 // Interface pour le module
 export interface Module {
   id?: string
-  formation_id?: string
+  formation_id: string
+  formation: Formation
   title: string
   description: string | null
   instructor_id: string | null

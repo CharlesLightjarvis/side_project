@@ -45,7 +45,8 @@ export function NavMain({
           const hasActiveChild = item.items?.some((subItem) =>
             matchRoute({ to: subItem.url }),
           )
-          const isActive = matchRoute({ to: item.url })
+          // Use fuzzy match to match all sub-paths (e.g., /student/formations/* matches /student/formations)
+          const isActive = matchRoute({ to: item.url, fuzzy: true })
 
           // Only show parent as active when sidebar is collapsed
           const isCollapsed = state === 'collapsed'
@@ -74,14 +75,14 @@ export function NavMain({
             <Collapsible
               key={item.title}
               asChild
-              defaultOpen={item.isActive || !!hasActiveChild}
+              defaultOpen={item.isActive || !!hasActiveChild || !!isActive}
               className="group/collapsible"
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    isActive={showParentActive}
+                    isActive={showParentActive || !!isActive}
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>

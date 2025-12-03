@@ -1,4 +1,5 @@
 import type { Attachment, ExternalLink } from './attachment'
+import type { Module } from './module'
 
 // Interface pour Lesson (données du frontend)
 export interface Lesson {
@@ -7,6 +8,7 @@ export interface Lesson {
   content: string | null
   order: number
   module_id: string | null
+  module: Module
   attachments: Attachment[]
   created_at: string
   updated_at: string
@@ -19,6 +21,7 @@ export interface LessonFromBackend {
   content: string | null
   order: number
   module_id: string | null
+  module: Module
   attachments: Attachment[]
   created_at: string
   updated_at: string

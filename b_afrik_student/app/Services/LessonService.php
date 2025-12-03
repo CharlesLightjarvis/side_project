@@ -17,7 +17,7 @@ class LessonService
      */
     public function getAllLessons()
     {
-        return Lesson::with('attachments')
+        return Lesson::with(['module', 'attachments'])
                 ->orderBy('created_at', 'desc')
                 ->get();
     }
@@ -44,16 +44,16 @@ class LessonService
         // Flatten lessons from all modules with module and formation info
         return $moduleAssignments->flatMap(function ($assignment) {
             return $assignment->module->lessons->map(function ($lesson) use ($assignment) {
-                // Add module and formation info to each lesson
-                $lesson->module_info = [
-                    'id' => $assignment->module->id,
-                    'title' => $assignment->module->title,
-                    'formation' => [
-                        'id' => $assignment->module->formation->id,
-                        'title' => $assignment->module->formation->title,
-                    ],
-                ];
+                // Clone the module without its lessons to avoid circular reference
+                $moduleWithoutLessons = clone $assignment->module;
+                $moduleWithoutLessons->unsetRelation('lessons');
+
+                // Set the module relation on the lesson
+                $lesson->setRelation('module', $moduleWithoutLessons);
+
+                // Add attachment count
                 $lesson->attachments_count = $lesson->attachments->count();
+
                 return $lesson;
             });
         });
@@ -83,7 +83,7 @@ class LessonService
                 $this->handleExternalLinks($lesson, $externalLinks);
             }
 
-            return $lesson->load('attachments');
+            return $lesson->load('attachments', 'module');
         });
     }
 
@@ -117,7 +117,7 @@ class LessonService
                 $this->handleExternalLinks($lesson, $externalLinks);
             }
 
-            return $lesson->fresh(['attachments']);
+            return $lesson->fresh(['attachments', 'module']);
         });
     }
 

@@ -22,7 +22,9 @@ export const createColumns = ({
 }: ColumnsProps): ColumnDef<Module>[] => [
   {
     accessorKey: 'title',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Titre" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Titre" />
+    ),
     cell: ({ row }) => {
       return <div className="font-medium">{row.getValue('title')}</div>
     },
@@ -39,6 +41,17 @@ export const createColumns = ({
           {description}
         </div>
       )
+    },
+  },
+  {
+    id: 'formation',
+    accessorFn: (row) => row.formation?.title,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Formation" />
+    ),
+    cell: ({ row }) => {
+      const formation = row.original.formation
+      return <div className="font-medium">{formation?.title || '-'}</div>
     },
   },
   {

@@ -1,5 +1,4 @@
 import type { Module } from './module'
-import type { Lesson } from './lesson'
 
 // Enum pour les niveaux de formation
 export enum FormationLevel {
@@ -13,9 +12,6 @@ export interface LevelType {
   value: FormationLevel
   label: string
 }
-
-// Re-export pour faciliter les imports
-export type { Module, Lesson }
 
 // Interface pour la formation (affichage)
 export interface Formation {

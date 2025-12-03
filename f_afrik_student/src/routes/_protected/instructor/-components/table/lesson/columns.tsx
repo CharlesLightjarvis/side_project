@@ -22,7 +22,9 @@ export const createColumns = ({
 }: ColumnsProps): ColumnDef<Lesson>[] => [
   {
     accessorKey: 'title',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Titre" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Titre" />
+    ),
     cell: ({ row }) => {
       return <div className="font-medium">{row.getValue('title')}</div>
     },
@@ -39,6 +41,17 @@ export const createColumns = ({
           {content}
         </div>
       )
+    },
+  },
+  {
+    id: 'module',
+    accessorFn: (row) => row.module?.title,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Module" />
+    ),
+    cell: ({ row }) => {
+      const module = row.original.module
+      return <div className="font-medium">{module?.title || '-'}</div>
     },
   },
   {

@@ -33,6 +33,7 @@ import { Route as ProtectedInstructorDashboardIndexRouteImport } from './routes/
 import { Route as ProtectedAdminDashboardIndexRouteImport } from './routes/_protected/admin/dashboard/index'
 import { Route as ProtectedStudentFormationsFormationIdIndexRouteImport } from './routes/_protected/student/formations/$formationId/index'
 import { Route as ProtectedStudentFormationsFormationIdLessonsRouteRouteImport } from './routes/_protected/student/formations/$formationId/lessons/route'
+import { Route as ProtectedStudentFormationsFormationIdLessonsIndexRouteImport } from './routes/_protected/student/formations/$formationId/lessons/index'
 import { Route as ProtectedStudentFormationsFormationIdLessonsLessonIdRouteImport } from './routes/_protected/student/formations/$formationId/lessons/$lessonId'
 
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
@@ -171,6 +172,13 @@ const ProtectedStudentFormationsFormationIdLessonsRouteRoute =
     path: '/$formationId/lessons',
     getParentRoute: () => ProtectedStudentFormationsRouteRoute,
   } as any)
+const ProtectedStudentFormationsFormationIdLessonsIndexRoute =
+  ProtectedStudentFormationsFormationIdLessonsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () =>
+      ProtectedStudentFormationsFormationIdLessonsRouteRoute,
+  } as any)
 const ProtectedStudentFormationsFormationIdLessonsLessonIdRoute =
   ProtectedStudentFormationsFormationIdLessonsLessonIdRouteImport.update({
     id: '/$lessonId',
@@ -204,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/student/formations/$formationId/lessons': typeof ProtectedStudentFormationsFormationIdLessonsRouteRouteWithChildren
   '/student/formations/$formationId': typeof ProtectedStudentFormationsFormationIdIndexRoute
   '/student/formations/$formationId/lessons/$lessonId': typeof ProtectedStudentFormationsFormationIdLessonsLessonIdRoute
+  '/student/formations/$formationId/lessons/': typeof ProtectedStudentFormationsFormationIdLessonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -226,9 +235,9 @@ export interface FileRoutesByTo {
   '/instructor/dashboard': typeof ProtectedInstructorDashboardIndexRoute
   '/student/dashboard': typeof ProtectedStudentDashboardIndexRoute
   '/student/formations': typeof ProtectedStudentFormationsIndexRoute
-  '/student/formations/$formationId/lessons': typeof ProtectedStudentFormationsFormationIdLessonsRouteRouteWithChildren
   '/student/formations/$formationId': typeof ProtectedStudentFormationsFormationIdIndexRoute
   '/student/formations/$formationId/lessons/$lessonId': typeof ProtectedStudentFormationsFormationIdLessonsLessonIdRoute
+  '/student/formations/$formationId/lessons': typeof ProtectedStudentFormationsFormationIdLessonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -257,6 +266,7 @@ export interface FileRoutesById {
   '/_protected/student/formations/$formationId/lessons': typeof ProtectedStudentFormationsFormationIdLessonsRouteRouteWithChildren
   '/_protected/student/formations/$formationId/': typeof ProtectedStudentFormationsFormationIdIndexRoute
   '/_protected/student/formations/$formationId/lessons/$lessonId': typeof ProtectedStudentFormationsFormationIdLessonsLessonIdRoute
+  '/_protected/student/formations/$formationId/lessons/': typeof ProtectedStudentFormationsFormationIdLessonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/student/formations/$formationId/lessons'
     | '/student/formations/$formationId'
     | '/student/formations/$formationId/lessons/$lessonId'
+    | '/student/formations/$formationId/lessons/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -307,9 +318,9 @@ export interface FileRouteTypes {
     | '/instructor/dashboard'
     | '/student/dashboard'
     | '/student/formations'
-    | '/student/formations/$formationId/lessons'
     | '/student/formations/$formationId'
     | '/student/formations/$formationId/lessons/$lessonId'
+    | '/student/formations/$formationId/lessons'
   id:
     | '__root__'
     | '/'
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/_protected/student/formations/$formationId/lessons'
     | '/_protected/student/formations/$formationId/'
     | '/_protected/student/formations/$formationId/lessons/$lessonId'
+    | '/_protected/student/formations/$formationId/lessons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -517,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedStudentFormationsFormationIdLessonsRouteRouteImport
       parentRoute: typeof ProtectedStudentFormationsRouteRoute
     }
+    '/_protected/student/formations/$formationId/lessons/': {
+      id: '/_protected/student/formations/$formationId/lessons/'
+      path: '/'
+      fullPath: '/student/formations/$formationId/lessons/'
+      preLoaderRoute: typeof ProtectedStudentFormationsFormationIdLessonsIndexRouteImport
+      parentRoute: typeof ProtectedStudentFormationsFormationIdLessonsRouteRoute
+    }
     '/_protected/student/formations/$formationId/lessons/$lessonId': {
       id: '/_protected/student/formations/$formationId/lessons/$lessonId'
       path: '/$lessonId'
@@ -574,12 +593,15 @@ const ProtectedInstructorRouteRouteWithChildren =
 
 interface ProtectedStudentFormationsFormationIdLessonsRouteRouteChildren {
   ProtectedStudentFormationsFormationIdLessonsLessonIdRoute: typeof ProtectedStudentFormationsFormationIdLessonsLessonIdRoute
+  ProtectedStudentFormationsFormationIdLessonsIndexRoute: typeof ProtectedStudentFormationsFormationIdLessonsIndexRoute
 }
 
 const ProtectedStudentFormationsFormationIdLessonsRouteRouteChildren: ProtectedStudentFormationsFormationIdLessonsRouteRouteChildren =
   {
     ProtectedStudentFormationsFormationIdLessonsLessonIdRoute:
       ProtectedStudentFormationsFormationIdLessonsLessonIdRoute,
+    ProtectedStudentFormationsFormationIdLessonsIndexRoute:
+      ProtectedStudentFormationsFormationIdLessonsIndexRoute,
   }
 
 const ProtectedStudentFormationsFormationIdLessonsRouteRouteWithChildren =

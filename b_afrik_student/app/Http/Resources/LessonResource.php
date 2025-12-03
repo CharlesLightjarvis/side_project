@@ -19,6 +19,7 @@ class LessonResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'module_id' => $this->module_id,
+            'module' => ModuleResource::make($this->whenLoaded('module')),
             'order' => $this->order,
             'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),
             'created_at' => $this->created_at,

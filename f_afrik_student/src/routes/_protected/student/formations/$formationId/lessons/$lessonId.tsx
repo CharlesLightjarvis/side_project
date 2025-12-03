@@ -112,13 +112,21 @@ const getFileIcon = (type: string) => {
 }
 
 function LessonViewerPage() {
-  const { lessonId } = Route.useParams()
-  const { currentFormation } = useFormations()
+  const { lessonId, formationId } = Route.useParams()
+  const { currentFormation, fetchFormation } = useFormations()
   const navigate = useNavigate()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
   const [activeTab, setActiveTab] = useState('content')
 
+  // Fetch formation if not loaded (e.g., on page refresh)
+  useEffect(() => {
+    if (!currentFormation || currentFormation.id !== formationId) {
+      fetchFormation(formationId)
+    }
+  }, [formationId, currentFormation, fetchFormation])
+
+  // Find lesson in current formation
   useEffect(() => {
     if (currentFormation?.modules) {
       for (const module of currentFormation.modules) {
@@ -172,14 +180,16 @@ function LessonViewerPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto w-full py-6 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 gap-3">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate({ to: '/student/formations' })}
+              onClick={() =>
+                navigate({ to: `/student/formations/${formationId}` })
+              }
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
